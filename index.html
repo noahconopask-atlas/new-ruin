@@ -94,7 +94,13 @@ html,body{margin:0;height:100%;background:#020202;overflow:hidden;color:var(--fg
 #jr .x button{flex:none;padding:9px 12px;text-transform:uppercase;letter-spacing:.18em;font-size:10.5px;background:rgba(2,2,2,.7)}
 #jr .meta{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
 #jr h2{font-weight:500;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#fff;margin:22px 0 8px}
-#jr .note{font-size:12.5px;line-height:1.7;color:rgba(236,236,236,.6);max-width:40em;margin:0 0 34px}
+#jr .note{font-size:12.5px;line-height:1.7;color:rgba(236,236,236,.75);max-width:40em;margin:0 0 22px}
+#jr .spec{margin:0 0 40px;max-width:40em;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+#jr .spec div{display:flex;gap:18px;padding:8px 0;border-top:1px solid rgba(255,255,255,.12);position:relative}
+#jr .spec div:last-child{border-bottom:1px solid rgba(255,255,255,.12)}
+#jr .spec div::before{content:"";position:absolute;left:0;top:-1px;width:7px;height:2px;background:#e8e8e8}
+#jr .spec dt{flex:0 0 7.5em;color:var(--dim)}
+#jr .spec dd{margin:0;color:#fff;line-height:1.6}
 #jr .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:44px 28px}
 #jr figure{margin:0}
 #jr .ph{display:block;width:100%;aspect-ratio:1.57;background:#0b0b0b;border:0;padding:0;cursor:zoom-in;overflow:hidden}
@@ -852,17 +858,22 @@ function buyLinks(id,short){const o=STORE.spreads[id]||{}, ol=o.originalLink||ST
 let jrBuilt=false;
 function renderJr(){if(jrBuilt) return; jrBuilt=true;
   $('jrIn').innerHTML=`<div class="meta">New Ruin / ArtifactArchive™</div><h2>Journal spreads</h2>
-    <p class="note">Pages from the New Ruin journals. Each spread is available as the original, one of one, for ${money(STORE.originalPrice)}, or as an archival 12 × 18 in print, open edition, for ${money(STORE.printPrice)}.</p>
+    <p class="note">Every spread is a handmade, one of a kind analog work on paper, drawn and painted by hand in the journal with pen, ink, acrylic, spray paint and chalk pencil. The original is the actual journal spread, and only one exists. Prints are archival reproductions of it.</p>
+    <dl class="spec">
+      <div><dt>Original</dt><dd>The handmade journal spread itself, 1 of 1. ${money(STORE.originalPrice)}</dd></div>
+      <div><dt>Medium</dt><dd>Pen, ink, acrylic, spray paint and chalk pencil on paper</dd></div>
+      <div><dt>Print</dt><dd>Archival reproduction, 12 × 18 in, open edition. ${money(STORE.printPrice)}</dd></div>
+    </dl>
     <div class="grid">${SCANS.map((id,i)=>{const b=buyLinks(id,true); return `<figure>
       <button class="ph" data-i="${i}" aria-label="View journal ${id} larger"><img loading="lazy" src="journals/${id}-t.jpg" alt="Journal spread ${id}"></button>
       <figcaption><div class="row"><span class="t">Journal ${id}</span><a class="dim" href="#scan-${id}" style="color:var(--dim);text-decoration:none">View scan</a></div>
-        <div class="row"><span class="dim">Original</span>${b.orig}</div><div class="row"><span class="dim">Print</span>${b.print}</div></figcaption></figure>`}).join('')}</div>`;
+        <div class="row"><span class="dim">Original 1/1</span>${b.orig}</div><div class="row"><span class="dim">Print</span>${b.print}</div></figcaption></figure>`}).join('')}</div>`;
   $('jrIn').querySelectorAll('.ph').forEach(bt=>bt.onclick=()=>openLb(+bt.dataset.i));
   $('jrIn').querySelectorAll('a[href^="#scan-"]').forEach(a=>a.addEventListener('click',()=>closeJr(true)))}
 let lbI=0;
 function showLb(i){lbI=(i+SCANS.length)%SCANS.length; const id=SCANS[lbI], b=buyLinks(id);
   $('lbImg').src=`journals/${id}.jpg`; $('lbImg').alt=`Journal spread ${id}`;
-  $('lbCap').textContent=`Journal ${id}`; $('lbBuy').innerHTML=b.orig+b.print}
+  $('lbCap').innerHTML=`Journal ${id}<br><span style="color:var(--dim)">Handmade original, 1 of 1</span>`; $('lbBuy').innerHTML=b.orig+b.print}
 function openLb(i){showLb(i); $('lb').classList.add('open'); $('lb').setAttribute('aria-hidden','false'); $('bLbClose').focus()}
 function closeLb(){$('lb').classList.remove('open'); $('lb').setAttribute('aria-hidden','true'); const t=$('jrIn').querySelector(`.ph[data-i="${lbI}"]`); t&&t.focus()}
 const lbOpen=()=>$('lb').classList.contains('open');
